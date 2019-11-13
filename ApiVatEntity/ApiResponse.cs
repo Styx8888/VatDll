@@ -34,7 +34,7 @@ namespace ApiVatEntity
 
     public class SingleSubjectResponseRoot
     {
-        public SingleResult SingleResult { get; set; }
+        public SingleResult Result { get; set; }
     }
 
     public class MultipleResult
@@ -45,6 +45,17 @@ namespace ApiVatEntity
 
     public class MultipleSubjectResponseRoot
     {
-        public MultipleResult MultipleResult { get; set; }
+        public MultipleResult Result { get; set; }
+    }
+
+    public class Result
+    {
+        public object subject { get; set; }
+        public string requestId { get; set; }
+    }
+
+    public class RootObject
+    {
+        public Result result { get; set; }
     }
 }
