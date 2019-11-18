@@ -1,7 +1,9 @@
-﻿using Flurl;
+﻿using System;
+using Flurl;
 using Flurl.Http;
 using RGiesecke.DllExport;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 
 namespace ApiVatEntity
@@ -12,16 +14,25 @@ namespace ApiVatEntity
 
         public const string apiTestAddress = "https://wl-test.mf.gov.pl";
 
+        public const string SaveFullPath = @"C:\Temp\vatentity.txt";
+
         [DllExport]
-        public static Subject GetSubject(string nip, string date)
+        public static string GetSubject(string nip, string date)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
             var endpoint = apiAddress.AppendPathSegment($"api/search/nip/{nip}");
             endpoint.SetQueryParam("date", date);
-            var response = endpoint.GetJsonAsync<SingleSubjectResponseRoot>().Result;
+            //var response = endpoint.GetJsonAsync<SingleSubjectResponseRoot>().Result;
 
-            return response.Result.subject;
+            var response = endpoint.GetStringAsync().Result;
+
+            Console.WriteLine(response);
+
+            SaveToFile(SaveFullPath, response);
+
+            //return response.Result.subject;
+            return response;
         }
 
         [DllExport]
@@ -31,9 +42,15 @@ namespace ApiVatEntity
 
             var endpoint = apiTestAddress.AppendPathSegment($"api/search/nip/{nip}");
             endpoint.SetQueryParam("date", date);
-            var response = endpoint.GetJsonAsync<RootObject>().Result;
+            var response = endpoint.GetStringAsync().Result;
+            //var response = endpoint.GetJsonAsync<RootObject>().Result;
+            
+            Console.WriteLine(response);
 
-            return "test" + response.result.requestId;
+            SaveToFile(SaveFullPath, response);
+            
+            //return "test" + response.result.requestId;
+            return response;
         }
 
         //public class Test
@@ -55,14 +72,11 @@ namespace ApiVatEntity
             return response.Result.subjects;
         }
 
-        //private static void Somewhere()
-        //{
-        //    ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(AlwaysGoodCertificate);
-        //}
+        private static void SaveToFile(string path, string content)
+        {
+            File.Delete(path);
 
-        //private static bool AlwaysGoodCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors policyErrors)
-        //{
-        //    return true;
-        //}
+            File.WriteAllText(path, content);
+        }
     }
 }
