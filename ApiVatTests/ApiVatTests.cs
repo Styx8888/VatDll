@@ -18,7 +18,7 @@ namespace ApiVatTests
         public void ApiMultiplePositiveTest()
         {
             var response = Vat.GetSubjects("5842334017,9570510820,5842327603", "2019-11-03");
-            Assert.IsTrue(response.Count > 0);
+            Assert.IsNotNull(response);
         }
 
         [TestMethod]

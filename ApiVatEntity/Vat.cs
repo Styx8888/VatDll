@@ -63,13 +63,17 @@ namespace ApiVatEntity
         //}
 
         [DllExport]
-        public static List<Subject> GetSubjects(string nips, string date)
+        public static string GetSubjects(string nips, string date)
         {
             var endpoint = apiAddress.AppendPathSegment($"api/search/nips/{nips}");
             endpoint.SetQueryParam("date", date);
-            var response = endpoint.GetJsonAsync<MultipleSubjectResponseRoot>().Result;
+            var response = endpoint.GetStringAsync().Result;
+            // var response = endpoint.GetJsonAsync<MultipleSubjectResponseRoot>().Result;
+            Console.WriteLine(response);
 
-            return response.Result.subjects;
+            SaveToFile(SaveFullPath, response);
+            // return response.Result.subjects;
+            return response;
         }
 
         private static void SaveToFile(string path, string content)
